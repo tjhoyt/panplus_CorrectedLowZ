@@ -1,0 +1,24 @@
+{
+  "description": "delta_mass = highz_offset - lowz_offset, offset = median(HOST_LOGMASS - prosp_mass)",
+  "lowz": {
+    "n_overlap": 414,
+    "n_clipped": 414,
+    "median": -0.57574892694924,
+    "median_ci68_lo": -0.6004293763129711,
+    "median_ci68_hi": -0.5636210053810427,
+    "mean": -0.7951357389367204,
+    "mean_ci68_lo": -0.8504019846413624,
+    "mean_ci68_hi": -0.7418557805775325
+  },
+  "highz": {
+    "n_overlap": 462,
+    "n_clipped": 436,
+    "median": 0.023176626058886818,
+    "median_ci68_lo": 0.012611624699240487,
+    "median_ci68_hi": 0.035420306080268915,
+    "mean": 0.004787031826304398,
+    "mean_ci68_lo": -0.005944821164748309,
+    "mean_ci68_hi": 0.015899328577966724
+  },
+  "delta_mass": 0.5989255530081268
+}

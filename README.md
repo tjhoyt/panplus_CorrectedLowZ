@@ -16,10 +16,10 @@ them the wrong bias correction.
 
 This repository re-derives the cubic bias-correction-vs-color relations for
 the low- and high-mass populations directly from the published Pantheon+SH0ES
-catalog, shifts each low-z host mass by `delta_mass = 0.6 dex`, and
-recomputes `biasCor_m_b` (and therefore `m_b_corr`) for any supernova that
-crosses the M = 10 threshold once the shift is applied. Supernovae that don't
-cross the threshold are left untouched.
+catalog, shifts each low-z host mass by `delta_mass` (see "Mass offset"
+below), and recomputes `biasCor_m_b` (and therefore `m_b_corr`) for any
+supernova that crosses the M = 10 threshold once the shift is applied.
+Supernovae that don't cross the threshold are left untouched.
 
 ## Contents
 
@@ -36,6 +36,19 @@ cross the threshold are left untouched.
   Pantheon+SH0ES covariance matrix does not need to be recomputed alongside
   the bias-correction shift (see "Covariance matrix" below). Writes
   `verify_covariance_unchanged.png`.
+- `compute_mass_offset.py` - derives `delta_mass` and generates the low-z/
+  high-z mass comparison figures below (see "Mass offset" below). Not
+  runnable as-is - see that section for why.
+- `mass_offset.json` - the `delta_mass` value `extract_lowz_bias_correction.py`
+  reads, with its full provenance (see "Mass offset" below).
+- `mass_compare_lowZ.png` / `mass_compare_highZ.png` - Pantheon+SH0ES vs.
+  Prospector host mass comparison, for the low-z and high-z samples used to
+  derive `delta_mass`.
+- `panPlus_union3_IDmatch.csv` - Pantheon+ CID <-> Union3 SN-name crosswalk,
+  needed because Prospector masses are keyed by Union3 naming rather than
+  Pantheon+ CID. Carries no mass information.
+- `stat_tools.py` - small bootstrap-statistics helper used by
+  `compute_mass_offset.py`.
 
 ## Usage
 
@@ -57,12 +70,64 @@ don't affect the corrected data.
 - Low-z cut: `0.01 < zCMB < 0.15`.
 - For each of the low-mass and high-mass populations within that cut, fit a
   cubic polynomial of `biasCor_m_b` vs. SALT2 color `c`.
-- Shift every low-z host mass by `delta_mass = 0.6 dex`.
+- Shift every low-z host mass by `delta_mass` dex (see "Mass offset").
 - For supernovae whose shifted mass crosses from `<= 10` to `> 10`, replace
   `biasCor_m_b` with the high-mass cubic fit evaluated at that supernova's
   color, and propagate the change through to `m_b_corr`.
 - All other supernovae (outside the low-z cut, or not crossing the
   threshold) are unchanged.
+
+## Mass offset
+
+Prospector SED-fit masses are a single, homogeneously derived mass estimate
+available across the full Pantheon+SH0ES redshift range. What matters about
+them here isn't their absolute value relative to some other reference - it's
+that they put every Pantheon+SH0ES supernova's host mass on the same,
+standardized system regardless of redshift. They're used as a yardstick to
+compare Pantheon+SH0ES host masses against *themselves* at low vs. high z.
+
+Pantheon+SH0ES host masses (`HOST_LOGMASS`) agree with Prospector masses at
+high redshift (`zHEL >= 0.15`), but disagree at low redshift (`zHEL < 0.15`).
+`delta_mass` is the shift that brings the low-z Pantheon+/Prospector offset
+onto the same zero-point as the high-z offset:
+
+```
+delta_mass = median(HOST_LOGMASS - prosp_mass)[highz] - median(HOST_LOGMASS - prosp_mass)[lowz]
+           = 0.0232 - (-0.5757)
+           = 0.5989 dex
+```
+
+(`zHEL >= 0.15` / `< 0.15`, both excluding SH0ES calibrators, sigma-clipped
+at 4 sigma; see `mass_offset.json` for the full numbers including bootstrap
+confidence intervals and sample sizes).
+
+The median (not the mean) is adopted for `delta_mass`. The per-SN
+Pantheon+/Prospector differences are long-tailed - a handful of SNe disagree
+by more than 1-2 dex - which pulls the mean noticeably further from zero
+than the median in both samples:
+
+| | median | mean | N |
+|---|---|---|---|
+| low-z (`zHEL<0.15`) offset | -0.576 | -0.795 | 414 |
+| high-z (`zHEL>=0.15`) offset | +0.023 | +0.005 | 436 |
+
+Both statistics are reported in `mass_offset.json` and plotted in
+`mass_compare_lowZ.png` / `mass_compare_highZ.png` so the tail is visible,
+but the median is the more robust summary of the bulk offset and is what's
+used for `delta_mass`.
+
+`compute_mass_offset.py` reproduces this calculation and regenerates the
+comparison figures, but it depends on a per-SN table of Prospector host
+masses that is **not included in this repository**: it underlies a still-
+unpublished mass analysis (the Union3.1 paper, currently in review) and
+will be added here once that paper is accepted. (`panPlus_union3_IDmatch.csv`,
+the Pantheon+/Union3 ID crosswalk it also needs, carries no mass information
+and is included.) Until the mass table is available, `compute_mass_offset.py`
+is included for transparency on the method - it documents exactly how
+`delta_mass` and the comparison figures were derived - but isn't runnable
+as-is, and `mass_offset.json` plus the two `.png` figures (committed,
+derived-numbers/plots only, no per-SN masses) are what's actually used
+downstream.
 
 ## Covariance matrix
 

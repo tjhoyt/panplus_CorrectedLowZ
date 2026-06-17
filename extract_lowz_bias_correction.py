@@ -9,6 +9,8 @@ Cells 52-59 sat between 51 and 60/61 in the notebook but are unrelated
 diagnostic plots (one of them isn't even valid Python) - they don't feed
 into t_modify, so they're omitted here.
 """
+import json
+
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.table import Table, MaskedColumn
@@ -74,8 +76,11 @@ plt.ylabel('$\\delta_{bias,BS21}$ (mag)')
 # low-z table
 t_lowz = t[zcut]
 
-# Define new masses
-delta_mass = 0.6
+# Define new masses. delta_mass is the shift that brings the low-z
+# Pantheon+/Prospector mass offset onto the same zero-point as the high-z
+# Pantheon+/Prospector offset - see compute_mass_offset.py and mass_offset.json.
+with open('mass_offset.json') as f:
+    delta_mass = json.load(f)['delta_mass']
 t_lowz['new_mass_lowz'] = t_lowz['HOST_LOGMASS'] + delta_mass
 
 # Unpack the cubic bias corr functions
