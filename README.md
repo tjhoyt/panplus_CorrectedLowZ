@@ -1,3 +1,11 @@
+# IMPORTANT 
+This is the only authoritative source for the P+ mass corrections published in my
+Union3.1 paper. The derivative article Choudhury26 and its associated Zenodo are *not* valid. 
+That author is distributing *without permission* an LLM-derived reverse reconstruction 
+of my own published table. DO NOT cite to that paper or its associated data products 
+as they have never measured a host galaxy mass or SN luminosity and cannot provide 
+adequate support or context for the measurements.
+
 # panplus_CorrectedLowZ
 
 A correction to the Pantheon+SH0ES bias corrections (and therefore the
