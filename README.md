@@ -1,10 +1,12 @@
 # IMPORTANT 
 This is the only authoritative source for the P+ mass corrections published in my
-Union3.1 paper. The derivative article Choudhury26 and its associated Zenodo are *not* valid. 
+Union3.1 paper. The derivative repository hosted by Choudhury26 and its associated Zenodo
+are *not* a valid nor approved source of these files.
+
 That author is distributing *without permission* an LLM-derived reverse reconstruction 
-of my own published table. DO NOT cite to that paper or its associated data products 
+of my own published table. Do not cite that paper if using its associated data products 
 as they have never measured a host galaxy mass or SN luminosity and cannot provide 
-adequate support or context for the measurements.
+adequate support or context for the measurements that were in fact made by this author.
 
 # panplus_CorrectedLowZ
 
